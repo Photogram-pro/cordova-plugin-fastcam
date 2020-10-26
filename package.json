@@ -1,0 +1,13 @@
+{
+  "name": "cordova-plugin-fastcam",
+  "version": "1.0.0",
+  "description": "",
+  "main": "www/FastCamera.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "typings": "./types/index.d.ts"
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin id="cordova-plugin-fastcam" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <name>cordova-plugin-fastcam</name>
+  <description>Take pictures with the lowest possible latency and a very exact timestamp for time sensitive applications.</description>
+  <license>Apache 2.0</license>
+  <keywords>cordova,phonegap,ecosystem:cordova,cordova-android,ionic,camera,cam,camera-preview,preview</keywords>
+
+  <js-module src="www/FastCamera.js" name="FastCamera">
+    <clobbers target="FastCamera" />
+  </js-module>
+
+  <platform name="android">
+    <source-file src="src/android/FastCamera.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/CameraActivity.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/FileUtils.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/PerformanceAnalysis.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/CameraMode.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/ResultingFile.java" target-dir="src/com/cordovapluginfastcam" />
+
+    <source-file src="src/android/activity_camera.xml" target-dir="res/layout" />
+
+    <framework src="com.otaliastudios:cameraview:2.6.4" />
+    <framework src="androidx.appcompat:appcompat:1.1.0" />
+    <framework src="androidx.constraintlayout:constraintlayout:1.1.3" />
+
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="FastCamera">
+        <param name="android-package" value="com.cordovapluginfastcam.FastCamera" />
+      </feature>
+    </config-file>
+
+    <config-file target="AndroidManifest.xml" parent="/manifest">
+      <uses-feature android:name="android.hardware.camera" />
+      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    </config-file>
+    <config-file target="AndroidManifest.xml" parent="/manifest/application">
+      <activity android:label="Camera Activity" android:name="com.cordovapluginfastcam.CameraActivity"></activity>
+    </config-file>
+  </platform>
+
+</plugin>
