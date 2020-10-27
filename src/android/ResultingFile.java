@@ -32,7 +32,9 @@ public class ResultingFile {
             json.put("filePath", this.filePath);
             json.put("fileType", this.fileType);
             json.put("timestamp", this.timestamp);
-            json.put("position", this.position.toJson());
+            if (this.position != null) {
+                json.put("position", this.position.toJson());
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

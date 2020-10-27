@@ -217,6 +217,13 @@ public class CameraActivity extends Activity {
         }
     }
 
+    private void updateCurrentPosition() {
+        GpsCommunication gps = GpsCommunication.getInstance();
+        if (gps != null) {
+            this.currentPosition = gps.getCurrentPosition();
+        }
+    }
+
     private String getLocalFilePath(String fileName) {
         File folder = new File(dataFolderPath);
         String filePath = folder + "/" + fileName;
@@ -232,7 +239,7 @@ public class CameraActivity extends Activity {
          } else {
              String filePath = getLocalFilePath("video_" + this.getCurrentTimeMs() + ".mp4");
              File outputFile = new File(filePath);
-             this.currentPosition = GpsCommunication.getInstance().getCurrentPosition();
+             this.updateCurrentPosition();
              camera.takeVideoSnapshot(outputFile);
              startEventTimestamp = this.getCurrentTimeMs();
          }
@@ -243,7 +250,7 @@ public class CameraActivity extends Activity {
     public void onCaptureSingleImage() {
         CameraView camera = getCamera();
         camera.setMode(Mode.PICTURE);
-        this.currentPosition = GpsCommunication.getInstance().getCurrentPosition();
+        this.updateCurrentPosition();
         startEventTimestamp = this.getCurrentTimeMs();
         camera.takePictureSnapshot();
     }
@@ -266,7 +273,8 @@ public class CameraActivity extends Activity {
             long intervalMs = 1000 / FRAME_RATE;
             this.pictureTakingLoop = new ScheduledThreadPoolExecutor(1);
             this.pictureTakingLoop.scheduleAtFixedRate(() -> {
-                this.currentPosition = GpsCommunication.getInstance().getCurrentPosition();
+                Log.d(TAG, "Take picture snapshot");
+                this.updateCurrentPosition();
                 startEventTimestamp = this.getCurrentTimeMs();
                 camera.takePictureSnapshot();
             }, 0, intervalMs, TimeUnit.MILLISECONDS);
