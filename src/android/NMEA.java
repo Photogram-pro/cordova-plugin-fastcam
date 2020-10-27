@@ -84,7 +84,7 @@ public class NMEA {
         }
     }
 
-    public class GPSPosition {
+    public class GPSPosition implements Cloneable {
         public float time = 0.0f;
         public float lat = 0.0f;
         public float lon = 0.0f;
@@ -117,6 +117,10 @@ public class NMEA {
                 e.printStackTrace();
             }
             return json;
+        }
+
+        @Override public GPSPosition clone() throws CloneNotSupportedException {
+            return (GPSPosition) super.clone();
         }
     }
 

@@ -71,8 +71,6 @@ public class FastCamera extends CordovaPlugin implements GpsDataCallback {
 
     @Override
     public void onData(NMEA.GPSPosition pos) {
-        Log.d(TAG, "GPS data cb: " + pos.toString());
-
         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, pos.toJson());
         pluginResult.setKeepCallback(true); // keep callback
         this.positionDataCallback.sendPluginResult(pluginResult);
