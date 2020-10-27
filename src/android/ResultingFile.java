@@ -1,5 +1,8 @@
 package com.cordovapluginfastcam;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class ResultingFile {
     public enum ResultingFileTypes  {
         VIDEO,
@@ -8,6 +11,7 @@ public class ResultingFile {
 
     private ResultingFileTypes fileType;
     private String filePath;
+    private NMEA.GPSPosition position;
     /**
      * MS Timestamp when the
      * file was created. For
@@ -15,26 +19,25 @@ public class ResultingFile {
      * timestamp
      */
     private long timestamp;
-    public ResultingFile(String filePath, ResultingFileTypes type, long timestamp) {
+    public ResultingFile(String filePath, ResultingFileTypes type, long timestamp, NMEA.GPSPosition position) {
         this.filePath = filePath;
         this.timestamp = timestamp;
         this.fileType = type;
+        this.position = position;
     }
 
     public  String toJSON() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("\"filePath\": \"");
-        sb.append(this.filePath);
-        sb.append("\",");
-        sb.append("\"fileType\": \"");
-        sb.append(this.fileType);
-        sb.append("\",");
-        sb.append("\"timestamp\": \"");
-        sb.append(this.timestamp);
-        sb.append("\"");
-        sb.append("}");
+        JSONObject json = new JSONObject();
+        try {
+            json.put("filePath", this.filePath);
+            json.put("fileType", this.fileType);
+            json.put("timestamp", this.timestamp);
+            json.put("position", this.position.toJson());
 
-        return sb.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return json.toString();
     }
 }

@@ -32,6 +32,15 @@ public class CameraActivity extends Activity {
     private ArrayList<ResultingFile> resultingFiles = new ArrayList<>();
     private PerformanceAnalysis videoDurationDeviationAnalyis = new PerformanceAnalysis("CameraView Duration");
     /**
+     * The current position of a GPS
+     * device connected via USB
+     * will be saved in the very moment
+     * the picture is being taken.
+     * That's why it needs to be
+     * stored.
+     */
+    private NMEA.GPSPosition currentPosition;
+    /**
      * Before taking photos or videos,
      * this timestamp can be set from
      * the outside to mark an arbitrary
@@ -79,6 +88,7 @@ public class CameraActivity extends Activity {
         Bundle data = getIntent().getExtras();
         this.mode = CameraMode.valueOf(data.getString("cameraMode"));
         long clockSyncTimestamp = data.getLong("clockSyncTimestamp", 0);
+
         if (clockSyncTimestamp != 0) {
             this.syncClock(clockSyncTimestamp);
         }
@@ -91,7 +101,7 @@ public class CameraActivity extends Activity {
      * from the outside, that
      * time offset will be used.
      * Otherwise, the device's
-     * internal time local time.
+     * internal local time.
      */
     private long getCurrentTimeMs() {
         if (this.syncedClockOffsetMs == 0) {
@@ -154,7 +164,7 @@ public class CameraActivity extends Activity {
 
                 String filePath = getLocalFilePath("img_" + getCurrentTimeMs() + ".jpeg");
                 result.toFile(new File(filePath), file -> {});
-                resultingFiles.add(new ResultingFile(filePath, ResultingFile.ResultingFileTypes.IMAGE, startEventTimestamp));
+                resultingFiles.add(new ResultingFile(filePath, ResultingFile.ResultingFileTypes.IMAGE, startEventTimestamp, currentPosition));
                 if (mode == CameraMode.SINGLE_PHOTO) {
                     finishWithResult();
                 }
@@ -175,7 +185,7 @@ public class CameraActivity extends Activity {
                 double durationDiff = Math.abs(cameraViewExpectedDuration - actualDuration);
                 videoDurationDeviationAnalyis.addValue(durationDiff);
                 Log.d(TAG, "Measured duration difference (= deviation of the the end time): " + durationDiff);
-                resultingFiles.add(new ResultingFile(file.getAbsolutePath(), ResultingFile.ResultingFileTypes.VIDEO, startEventTimestamp));
+                resultingFiles.add(new ResultingFile(file.getAbsolutePath(), ResultingFile.ResultingFileTypes.VIDEO, startEventTimestamp, currentPosition));
                 finishWithResult();
             }
 
@@ -222,6 +232,7 @@ public class CameraActivity extends Activity {
          } else {
              String filePath = getLocalFilePath("video_" + this.getCurrentTimeMs() + ".mp4");
              File outputFile = new File(filePath);
+             this.currentPosition = GpsCommunication.getInstance().getCurrentPosition();
              camera.takeVideoSnapshot(outputFile);
              startEventTimestamp = this.getCurrentTimeMs();
          }
@@ -232,6 +243,7 @@ public class CameraActivity extends Activity {
     public void onCaptureSingleImage() {
         CameraView camera = getCamera();
         camera.setMode(Mode.PICTURE);
+        this.currentPosition = GpsCommunication.getInstance().getCurrentPosition();
         startEventTimestamp = this.getCurrentTimeMs();
         camera.takePictureSnapshot();
     }
@@ -251,9 +263,10 @@ public class CameraActivity extends Activity {
             this.finishWithResult();
         } else {
             camera.setMode(Mode.PICTURE);
-            long intervalMs = 1000 / 4;
+            long intervalMs = 1000 / FRAME_RATE;
             this.pictureTakingLoop = new ScheduledThreadPoolExecutor(1);
             this.pictureTakingLoop.scheduleAtFixedRate(() -> {
+                this.currentPosition = GpsCommunication.getInstance().getCurrentPosition();
                 startEventTimestamp = this.getCurrentTimeMs();
                 camera.takePictureSnapshot();
             }, 0, intervalMs, TimeUnit.MILLISECONDS);

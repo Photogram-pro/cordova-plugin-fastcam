@@ -9,21 +9,29 @@ import android.view.View;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.PluginResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class FastCamera extends CordovaPlugin {
+public class FastCamera extends CordovaPlugin implements GpsDataCallback {
     private static final String TAG = "CameraTestApp";
-    private CallbackContext currentCallbackContext = null;
+    private CallbackContext startCameraCallback = null;
+    private CallbackContext positionDataCallback = null;
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        this.currentCallbackContext  = callbackContext;
         
         if (action.equals("startCamera")) {
+            this.startCameraCallback  = callbackContext;
             this.startCamera(args);
+            return true;
+        }
+
+        if (action.equals("initGps")) {
+            this.positionDataCallback = callbackContext;
+            this.initGps(args);
             return true;
         }
         return false;
@@ -48,14 +56,34 @@ public class FastCamera extends CordovaPlugin {
         this.cordova.getActivity().startActivityForResult(intent, 0);
     }
 
+    private void initGps(JSONArray args) {
+        int baudRate = 0;
+        try {
+            baudRate = args.getInt(0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        GpsCommunication gps = GpsCommunication.getInstance(this.cordova.getActivity());
+        gps.configure(baudRate);
+        gps.setDataCallback(this);
+        gps.initialize();
+    }
+
+    @Override
+    public void onData(NMEA.GPSPosition pos) {
+        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, pos.toJson());
+        pluginResult.setKeepCallback(true); // keep callback
+        this.positionDataCallback.sendPluginResult(pluginResult);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         Log.d(TAG, "onActivityResult " + requestCode + " " + resultCode);
-        if (resultCode == Activity.RESULT_OK && this.currentCallbackContext != null) {
+        if (resultCode == Activity.RESULT_OK && this.startCameraCallback != null) {
             Bundle result = intent.getExtras();
             String resultJSON = result.getString("result");
             Log.d(TAG, "resultJSON: " + resultJSON);
-            this.currentCallbackContext.success(resultJSON);
+            this.startCameraCallback.success(resultJSON);
         }
     }
 

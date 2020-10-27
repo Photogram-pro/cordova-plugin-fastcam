@@ -17,6 +17,18 @@ class FastCamera {
       );
     });
   }
+
+  static initGps({ baudRate, onData = () => {}, onError = () => {} } = {}) {
+    exec(
+      (res) => {
+        onData(res);
+      },
+      onError,
+      FastCamera.PLUGIN_NAME,
+      "initGps",
+      [baudRate || 0]
+    );
+  }
 }
 
 navigator.fastCamera = FastCamera;

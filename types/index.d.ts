@@ -1,7 +1,19 @@
+interface GpsPosition {
+  altitude: number;
+  dir: number;
+  fixed: boolean;
+  lat: number;
+  lon: number;
+  quality: GpsFixType;
+  time: number;
+  velocity: number;
+}
+
 interface ResultingFile {
   filePath: string;
   timestamp: number;
   fileType: "VIDEO" | "IMAGE";
+  position: GpsPosition;
 }
 
 interface StartCameraParams {
@@ -24,8 +36,30 @@ interface StartCameraParams {
   clockSyncTimestamp?: number;
 }
 
+enum GpsFixType {
+  INVALID = 0,
+  GPS = 1,
+  DGPS = 2,
+  PPS = 3,
+  RTK_FIXED = 4,
+  FLOAT_RTK = 5,
+  ESTIMATED = 6,
+  MANUAL = 7,
+  SIMULATION = 8,
+}
+
+interface InitGpsParams {
+  baudRate?: number;
+  /**
+   * TODO: type position
+   */
+  onData: (position: GpsPosition) => void;
+  onError?: (e: any) => void;
+}
+
 interface FastCamera {
   startCamera(p: StartCameraParams): Promise<ResultingFile[]>;
+  initGps(p: InitGpsParams): void;
 }
 
 interface Navigator {
