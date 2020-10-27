@@ -166,6 +166,4 @@ public class NMEA {
 
         return position;
     }
-
-
 }
