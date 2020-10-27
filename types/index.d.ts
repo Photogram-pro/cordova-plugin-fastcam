@@ -21,16 +21,37 @@ interface GpsPosition {
   velocity: number;
 }
 
+/**
+ * An array of this type
+ * is returned from
+ * the 'startCamera' method
+ */
 interface ResultingFile {
   filePath: string;
+  /**
+   * For photos, this is
+   * the exact timestamp the
+   * image was taken, and for
+   * videos, it's the timestamp
+   * when the camera finished
+   * capturing.
+   */
   timestamp: number;
   fileType: "VIDEO" | "IMAGE";
+  /**
+   * If a GPS device was connected
+   * using USB OTG, the position
+   * will be saved here.
+   */
   position?: GpsPosition;
 }
 
 interface StartCameraParams {
   /**
-   * Defaults to SINGLE_PHOTO
+   * Defaults to SINGLE_PHOTO.
+   * - SINGLE_PHOTO = Take one picture and close the camera
+   * - PHOTO_SERIES = Take a series of photos with a rate of 200ms and close the camera
+   * - VIDEO = Take a video and close the camera
    */
   mode?: "PHOTO_SERIES" | "SINGLE_PHOTO" | "VIDEO";
   /**
