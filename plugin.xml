@@ -18,12 +18,18 @@
     <source-file src="src/android/PerformanceAnalysis.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/CameraMode.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/ResultingFile.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/NMEA.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/GpsDataCallback.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/GpsCommunication.java" target-dir="src/com/cordovapluginfastcam" />
 
     <source-file src="src/android/activity_camera.xml" target-dir="res/layout" />
 
     <framework src="com.otaliastudios:cameraview:2.6.4" />
     <framework src="androidx.appcompat:appcompat:1.1.0" />
     <framework src="androidx.constraintlayout:constraintlayout:1.1.3" />
+    <!-- <framework src="dep.gradle" custom="true" type="gradleReference" /> -->
+    
+    <lib-file src="lib/usb-serial-for-android-3.3.0.jar" />
 
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="FastCamera">
