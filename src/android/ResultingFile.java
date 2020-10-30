@@ -11,7 +11,7 @@ public class ResultingFile {
 
     private ResultingFileTypes fileType;
     private String filePath;
-    private NMEA.GPSPosition position;
+    private JSONObject position;
     /**
      * MS Timestamp when the
      * file was created. For
@@ -19,7 +19,7 @@ public class ResultingFile {
      * timestamp
      */
     private long timestamp;
-    public ResultingFile(String filePath, ResultingFileTypes type, long timestamp, NMEA.GPSPosition position) {
+    public ResultingFile(String filePath, ResultingFileTypes type, long timestamp, JSONObject position) {
         this.filePath = filePath;
         this.timestamp = timestamp;
         this.fileType = type;
@@ -33,7 +33,7 @@ public class ResultingFile {
             json.put("fileType", this.fileType);
             json.put("timestamp", this.timestamp);
             if (this.position != null) {
-                json.put("position", this.position.toJson());
+                json.put("position", this.position);
             }
 
         } catch (JSONException e) {

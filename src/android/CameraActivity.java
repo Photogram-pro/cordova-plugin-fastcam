@@ -18,6 +18,8 @@ import com.otaliastudios.cameraview.PictureResult;
 import com.otaliastudios.cameraview.VideoResult;
 import com.otaliastudios.cameraview.controls.Mode;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -39,7 +41,7 @@ public class CameraActivity extends Activity {
      * That's why it needs to be
      * stored.
      */
-    private NMEA.GPSPosition currentPosition;
+    private JSONObject currentPosition;
     /**
      * Before taking photos or videos,
      * this timestamp can be set from
@@ -220,7 +222,7 @@ public class CameraActivity extends Activity {
     private void updateCurrentPosition() {
         GpsCommunication gps = GpsCommunication.getInstance();
         if (gps != null) {
-            this.currentPosition = gps.getCurrentPosition();
+            this.currentPosition = gps.getCurrentPosition().toJson();
         }
     }
 
