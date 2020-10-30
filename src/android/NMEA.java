@@ -18,20 +18,21 @@ public class NMEA {
     }
 
     // utils
-    static float Latitude2Decimal(String lat, String NS) {
+    static double Latitude2Decimal(String lat, String NS) {
         if (lat.length() < 2) return 0f;
-        float med = Float.parseFloat(lat.substring(2))/60.0f;
-        med +=  Float.parseFloat(lat.substring(0, 2));
+        double med = Double.parseDouble(lat.substring(2))/60.0f;
+        med +=  Double.parseDouble(lat.substring(0, 2));
         if(NS.startsWith("S")) {
             med = -med;
         }
         return med;
     }
 
-    static float Longitude2Decimal(String lon, String WE) {
+    static double Longitude2Decimal(String lon, String WE) {
         if (lon.length() < 3) return 0f;
-        float med = Float.parseFloat(lon.substring(3))/60.0f;
-        med +=  Float.parseFloat(lon.substring(0, 3));
+        double med = Double.parseDouble(lon.substring(3))/60.0f;
+        med +=  Double.parseDouble(lon.substring(0, 3));
+        // double med = Double.parseDouble(lon);
         if(WE.startsWith("W")) {
             med = -med;
         }
@@ -41,11 +42,11 @@ public class NMEA {
     // parsers
     class GPGGA implements SentenceParser {
         public boolean parse(String [] tokens, GPSPosition position) {
-            position.time = Float.parseFloat(tokens[1]);
+            position.time = Double.parseDouble(tokens[1]);
             position.lat = Latitude2Decimal(tokens[2], tokens[3]);
             position.lon = Longitude2Decimal(tokens[4], tokens[5]);
             position.quality = Integer.parseInt(tokens[6]);
-            position.altitude = Float.parseFloat(tokens[9]);
+            position.altitude = Double.parseDouble(tokens[9]);
             return true;
         }
     }
@@ -85,13 +86,13 @@ public class NMEA {
     }
 
     public class GPSPosition implements Cloneable {
-        public float time = 0.0f;
-        public float lat = 0.0f;
-        public float lon = 0.0f;
+        public double time = 0.0f;
+        public double lat = 0.0f;
+        public double lon = 0.0f;
         public boolean fixed = false;
         public int quality = 0;
         public float dir = 0.0f;
-        public float altitude = 0.0f;
+        public double altitude = 0.0f;
         public float velocity = 0.0f;
 
         public void updatefix() {
@@ -99,7 +100,7 @@ public class NMEA {
         }
 
         public String toString() {
-            return String.format("POSITION: lat: %f, lon: %f, time: %f, Q: %d, dir: %f, alt: %f, vel: %f", lat, lon, time, quality, dir, altitude, velocity);
+            return String.format("POSITION: lat: %d, lon: %d, time: %f, Q: %d, dir: %f, alt: %f, vel: %f", lat, lon, time, quality, dir, altitude, velocity);
         }
 
         public JSONObject toJson() {
