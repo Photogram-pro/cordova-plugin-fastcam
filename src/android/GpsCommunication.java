@@ -133,12 +133,7 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
     }
 
     public NMEA.GPSPosition getCurrentPosition() {
-        try {
-            return this.currentPosition.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return this.currentPosition;
     }
 
     public void setDataCallback(GpsDataCallback cb) {

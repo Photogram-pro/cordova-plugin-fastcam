@@ -230,7 +230,6 @@ public class CameraActivity extends Activity {
                 this.currentPosition = pos.toJson();
                 Log.d(TAG, "currentPos: " + this.currentPosition.toString());
             }
-
         }
     }
 
