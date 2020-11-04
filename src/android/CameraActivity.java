@@ -213,16 +213,23 @@ public class CameraActivity extends Activity {
     }
 
     private void checkPermissions() {
-        // Ask for WRITE_EXTERNAL_STORAGE permission
         if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
     }
 
     private void updateCurrentPosition() {
         GpsCommunication gps = GpsCommunication.getInstance();
         if (gps != null) {
-            this.currentPosition = gps.getCurrentPosition().toJson();
+            NMEA.GPSPosition pos = gps.getCurrentPosition();
+            if (pos != null) {
+                this.currentPosition = pos.toJson();
+                Log.d(TAG, "currentPos: " + this.currentPosition.toString());
+            }
         }
     }
 
