@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CameraActivity extends Activity {
     private static final String TAG = "CameraActivity";
-    private static final String dataFolderPath = Environment.getExternalStorageDirectory() +  "/DCIM/Photogram";
+    private String dataFolderPath;
     private long startEventTimestamp = 0;
     private boolean isCapturing = false;
     private CameraMode mode = CameraMode.SINGLE_PHOTO;
@@ -61,6 +61,9 @@ public class CameraActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(this.getViewId("activity_camera", "layout"));
+        this.dataFolderPath = this.getApplicationContext().getFilesDir().getAbsolutePath();
+
+        Log.d(TAG, "Files dir: " + this.dataFolderPath);
 
         this.configureFromIntentData();
         this.setupDataFolder();
@@ -230,6 +233,7 @@ public class CameraActivity extends Activity {
                 this.currentPosition = pos.toJson();
                 Log.d(TAG, "currentPos: " + this.currentPosition.toString());
             }
+
         }
     }
 

@@ -42,11 +42,14 @@ public class NMEA {
     // parsers
     class GPGGA implements SentenceParser {
         public boolean parse(String [] tokens, GPSPosition position) {
+            double geoidSeparator = Double.parseDouble(tokens[11]);
             position.time = Double.parseDouble(tokens[1]);
             position.lat = Latitude2Decimal(tokens[2], tokens[3]);
             position.lon = Longitude2Decimal(tokens[4], tokens[5]);
             position.quality = Integer.parseInt(tokens[6]);
-            position.altitude = Double.parseDouble(tokens[9]);
+            // Subtract geoid separator from MSL, as it isn't precise
+            // enough for our use case. We calculate it ourselves
+            position.altitude = Double.parseDouble(tokens[9]) - geoidSeparator;
             return true;
         }
     }
@@ -85,7 +88,7 @@ public class NMEA {
         }
     }
 
-    public class GPSPosition implements Cloneable {
+    public class GPSPosition {
         public double time = 0.0f;
         public double lat = 0.0f;
         public double lon = 0.0f;
@@ -120,9 +123,6 @@ public class NMEA {
             return json;
         }
 
-        @Override public GPSPosition clone() throws CloneNotSupportedException {
-            return (GPSPosition) super.clone();
-        }
     }
 
     GPSPosition position = new GPSPosition();
@@ -153,7 +153,6 @@ public class NMEA {
                 if (!type.equals(typeFilter)) {
                     continue;
                 }
-                //TODO check crc
                 try {
                     if(sentenceParsers.containsKey(type)) {
                         sentenceParsers.get(type).parse(tokens, position);

@@ -12,17 +12,20 @@
   </js-module>
 
   <platform name="android">
-    <source-file src="src/android/FastCamera.java" target-dir="src/com/cordovapluginfastcam" />
-    <source-file src="src/android/CameraActivity.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/java" target-dir="src/com/cordovapluginfastcam" />
+    <!-- <source-file src="src/android/CameraActivity.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/FileUtils.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/PerformanceAnalysis.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/CameraMode.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/ResultingFile.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/NMEA.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/GpsDataCallback.java" target-dir="src/com/cordovapluginfastcam" />
-    <source-file src="src/android/GpsCommunication.java" target-dir="src/com/cordovapluginfastcam" />
+    <source-file src="src/android/GpsCommunication.java" target-dir="src/com/cordovapluginfastcam" /> -->
 
-    <source-file src="src/android/activity_camera.xml" target-dir="res/layout" />
+    <source-file src="src/android/layout/activity_camera.xml" target-dir="res/layout" />
+    <source-file src="src/android/assets/grid_h.txt" target-dir="assets" />
+    <source-file src="src/android/assets/grid_x.txt" target-dir="assets" />
+    <source-file src="src/android/assets/grid_y.txt" target-dir="assets" />
 
     <framework src="com.otaliastudios:cameraview:2.6.4" />
     <framework src="androidx.appcompat:appcompat:1.1.0" />

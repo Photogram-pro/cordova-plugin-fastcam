@@ -38,6 +38,18 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
     private int baudRate = 115200;
     private GpsDataCallback callback;
     private BroadcastReceiver broadcastReceiver;
+    private GeoidHeight geoidHeightCorrector;
+    /**
+     * Alt offset which can be configured
+     * from the outside
+     * Can be used to specify
+     * a value which gets subtracted
+     * from the actual height
+     * value (in centimeter).
+     * Useful if the GPS sensor
+     * is mounted on a pole.
+     */
+    private double altOffset = 0;
 
     private Activity activity;
 
@@ -53,6 +65,12 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
             }
         };
         activity.registerReceiver(broadcastReceiver, new IntentFilter(USB_PERMISSION));
+
+        try {
+            this.geoidHeightCorrector = new GeoidHeight(this.activity.getAssets().open("grid_x.txt"), this.activity.getAssets().open("grid_y.txt"), this.activity.getAssets().open("grid_h.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static GpsCommunication getInstance(Activity activity) {
@@ -66,11 +84,11 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
         return GpsCommunication.instance;
     }
 
-    public void configure(int baudRate) {
-        if (baudRate == 0) {
-            return;
+    public void configure(int baudRate, double altOffset) {
+        if (baudRate != 0) {
+            this.baudRate = baudRate;
         }
-        this.baudRate = baudRate;
+        this.altOffset = altOffset;
     }
 
     public void initialize() {
@@ -112,6 +130,10 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
     public void onNewData(byte[] bytes) {
         String strData = new String(bytes, StandardCharsets.UTF_8);
         this.currentPosition = nmeaParser.parse(strData, "GGA");
+        // Interpolate geoid height and add it
+        double altOffsetInMeters = this.altOffset != 0 ? this.altOffset / 100 : 0;
+        double geoidH = this.geoidHeightCorrector.getInterpolator().interpolateGeoidHeight(this.currentPosition.lat, this.currentPosition.lon);
+        this.currentPosition.altitude = this.currentPosition.altitude + geoidH - altOffsetInMeters;
         if (this.callback != null) {
             this.callback.onData(this.currentPosition);
         }

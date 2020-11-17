@@ -18,7 +18,12 @@ class FastCamera {
     });
   }
 
-  static initGps({ baudRate, onData = () => {}, onError = () => {} } = {}) {
+  static initGps({
+    baudRate = 0,
+    altitudeDifference = 0,
+    onData = () => {},
+    onError = () => {},
+  } = {}) {
     exec(
       (res) => {
         onData(res);
@@ -26,7 +31,7 @@ class FastCamera {
       onError,
       FastCamera.PLUGIN_NAME,
       "initGps",
-      [baudRate || 0]
+      [baudRate, altitudeDifference]
     );
   }
 }
