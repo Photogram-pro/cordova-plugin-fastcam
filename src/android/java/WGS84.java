@@ -1,4 +1,4 @@
-package com.photogram.cameratestapp;
+package com.cordovapluginfastcam;
 
 /**
  * Class representing WGS84-coordinates. Based on code from stack overflow.

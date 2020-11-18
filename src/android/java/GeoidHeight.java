@@ -1,6 +1,6 @@
-package com.photogram.cameratestapp;
+package com.cordovapluginfastcam;
 
-import com.photogram.cameratestapp.math.PointAltitudeInterpolator;
+import com.cordovapluginfastcam.math.PointAltitudeInterpolator;
 
 import java.io.InputStream;
 

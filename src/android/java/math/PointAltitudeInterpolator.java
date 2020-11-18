@@ -1,8 +1,8 @@
 package com.cordovapluginfastcam.math;
 import android.util.Log;
 
-import com.photogram.cameratestapp.UTM;
-import com.photogram.cameratestapp.WGS84;
+import com.cordovapluginfastcam.UTM;
+import com.cordovapluginfastcam.WGS84;
 
 public class PointAltitudeInterpolator {
     private static class GridPoint {
@@ -152,15 +152,12 @@ public class PointAltitudeInterpolator {
         UTM utm = new UTM(new WGS84(lat, lon));
         double easting = utm.getEasting();
         double northing = utm.getNorthing();
-        Log.d(TAG, "Interpolating: " + lat + " " + lon);
 
         double[] point = {easting, northing};
         Neighbor<double[], GridCell>[] nearestPoints = this.tree.knn(point, 1);
         GridCell nearestCell = nearestPoints[0].value;
         GridPoint[] points = nearestCell.getPoints();
 
-        Log.d(TAG, "NEAREST GRID CELL");
-        Log.d(TAG, nearestCell.toUtmString());
 
         // Apply bilinear interpolation using 4 points
         double x1 = points[0].getX();
@@ -168,8 +165,6 @@ public class PointAltitudeInterpolator {
         double x2 = points[1].getX();
         double y2 = points[2].getY();
 
-        Log.d(TAG, "Q1: " + x1 + "," + y1);
-        Log.d(TAG, "Q2: " + x2 + "," + y2);
 
         double fQ11 = points[0].getH();
         double fQ12 = points[1].getH();

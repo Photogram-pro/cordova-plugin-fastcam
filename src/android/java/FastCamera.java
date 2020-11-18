@@ -58,13 +58,19 @@ public class FastCamera extends CordovaPlugin implements GpsDataCallback {
 
     private void initGps(JSONArray args) {
         int baudRate = 0;
+        Double altOffset = 0d;
         try {
             baudRate = args.getInt(0);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        try {
+            altOffset = args.getDouble(1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         GpsCommunication gps = GpsCommunication.getInstance(this.cordova.getActivity());
-        gps.configure(baudRate);
+        gps.configure(baudRate, altOffset);
         gps.setDataCallback(this);
         gps.initialize();
     }

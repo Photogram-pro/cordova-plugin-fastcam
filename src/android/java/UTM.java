@@ -1,4 +1,4 @@
-package com.photogram.cameratestapp;
+package com.cordovapluginfastcam;
 
 import java.util.Locale;
 

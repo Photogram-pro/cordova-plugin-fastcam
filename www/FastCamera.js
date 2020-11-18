@@ -31,7 +31,7 @@ class FastCamera {
       onError,
       FastCamera.PLUGIN_NAME,
       "initGps",
-      [baudRate, altitudeDifference]
+      [baudRate, altitudeDifference || 0]
     );
   }
 }

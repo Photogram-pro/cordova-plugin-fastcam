@@ -12,7 +12,31 @@
   </js-module>
 
   <platform name="android">
-    <source-file src="src/android/java" target-dir="src/com/cordovapluginfastcam" />
+    <!-- Will be replaced when executing 'process_plugin_xml.js' -->
+    <!-- <java-files-start /> -->
+<source-file src="src/android/java/math/KDTree.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/math/BilinearInterpolation.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/math/LinearInterpolation.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/math/AbstractInterpolation.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/math/MathUtil.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/math/Neighbor.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/math/NeighborBuilder.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/math/HeapSelect.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/math/Sort.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/math/PointAltitudeInterpolator.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/CameraActivity.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/CameraMode.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/FastCamera.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/FileUtils.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/GeoidHeight.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/GpsCommunication.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/GpsDataCallback.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/NMEA.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/PerformanceAnalysis.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/ResultingFile.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/UTM.java" target-dir="src/com/cordovapluginfastcam" />
+<source-file src="src/android/java/WGS84.java" target-dir="src/com/cordovapluginfastcam" />
+    <!-- <java-files-end /> -->
     <!-- <source-file src="src/android/CameraActivity.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/FileUtils.java" target-dir="src/com/cordovapluginfastcam" />
     <source-file src="src/android/PerformanceAnalysis.java" target-dir="src/com/cordovapluginfastcam" />
