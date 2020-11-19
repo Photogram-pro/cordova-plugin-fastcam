@@ -131,9 +131,11 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
         String strData = new String(bytes, StandardCharsets.UTF_8);
         this.currentPosition = nmeaParser.parse(strData, "GGA");
         // Interpolate geoid height and add it
-        double altOffsetInMeters = this.altOffset != 0 ? this.altOffset / 100 : 0;
-        double geoidH = this.geoidHeightCorrector.getInterpolator().interpolateGeoidHeight(this.currentPosition.lat, this.currentPosition.lon);
-        this.currentPosition.altitude = this.currentPosition.altitude + geoidH - altOffsetInMeters;
+        if (this.currentPosition.altitude > 0) {
+            double altOffsetInMeters = this.altOffset != 0 ? this.altOffset / 100 : 0;
+            double geoidH = this.geoidHeightCorrector.getInterpolator().interpolateGeoidHeight(this.currentPosition.lat, this.currentPosition.lon);
+            this.currentPosition.altitude = this.currentPosition.altitude + geoidH - altOffsetInMeters;
+        }
         if (this.callback != null) {
             this.callback.onData(this.currentPosition);
         }
@@ -162,3 +164,4 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
         this.callback = cb;
     }
 }
+
