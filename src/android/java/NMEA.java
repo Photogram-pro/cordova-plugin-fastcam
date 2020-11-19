@@ -42,14 +42,14 @@ public class NMEA {
     // parsers
     class GPGGA implements SentenceParser {
         public boolean parse(String [] tokens, GPSPosition position) {
-            double geoidSeparator = Double.parseDouble(tokens[11]);
             position.time = Double.parseDouble(tokens[1]);
             position.lat = Latitude2Decimal(tokens[2], tokens[3]);
             position.lon = Longitude2Decimal(tokens[4], tokens[5]);
             position.quality = Integer.parseInt(tokens[6]);
             // Subtract geoid separator from MSL, as it isn't precise
             // enough for our use case. We calculate it ourselves
-            position.altitude = Double.parseDouble(tokens[9]) - geoidSeparator;
+            position.altitude = Double.parseDouble(tokens[9]);
+            position.geoidSeparator = Double.parseDouble(tokens[11]);
             return true;
         }
     }
@@ -97,6 +97,7 @@ public class NMEA {
         public float dir = 0.0f;
         public double altitude = 0.0f;
         public float velocity = 0.0f;
+        public double geoidSeparator = 0.0d;
 
         public void updatefix() {
             fixed = quality > 0;
