@@ -21,11 +21,12 @@ import com.otaliastudios.cameraview.controls.Mode;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class CameraActivity extends Activity {
+public class CameraActivity extends Activity implements GpsDataCallback {
     private static final String TAG = "CameraActivity";
     private String dataFolderPath;
     private long startEventTimestamp = 0;
@@ -53,7 +54,7 @@ public class CameraActivity extends Activity {
      * video and picture timestamps.
      * This can be used to sync with
      * external devices like GPS.
-      */
+     */
     private long syncedClockOffsetMs = 0;
     private ScheduledThreadPoolExecutor pictureTakingLoop = null;
 
@@ -69,6 +70,8 @@ public class CameraActivity extends Activity {
         this.setupDataFolder();
         this.checkPermissions();
         this.setupCamera();
+        GpsCommunication gps = GpsCommunication.getInstance();
+        gps.addEventListener(this);
     }
 
     @Override
@@ -243,22 +246,22 @@ public class CameraActivity extends Activity {
         return filePath;
     }
 
-     public void onCaptureVideo() {
-         CameraView camera = getCamera();
-         camera.setMode(Mode.VIDEO);
+    public void onCaptureVideo() {
+        CameraView camera = getCamera();
+        camera.setMode(Mode.VIDEO);
 
-         if (this.isCapturing) {
-             camera.stopVideo();
-         } else {
-             String filePath = getLocalFilePath("video_" + this.getCurrentTimeMs() + ".mp4");
-             File outputFile = new File(filePath);
-             this.updateCurrentPosition();
-             camera.takeVideoSnapshot(outputFile);
-             startEventTimestamp = this.getCurrentTimeMs();
-         }
+        if (this.isCapturing) {
+            camera.stopVideo();
+        } else {
+            String filePath = getLocalFilePath("video_" + this.getCurrentTimeMs() + ".mp4");
+            File outputFile = new File(filePath);
+            this.updateCurrentPosition();
+            camera.takeVideoSnapshot(outputFile);
+            startEventTimestamp = this.getCurrentTimeMs();
+        }
 
-         this.isCapturing = !this.isCapturing;
-     }
+        this.isCapturing = !this.isCapturing;
+    }
 
     public void onCaptureSingleImage() {
         CameraView camera = getCamera();
@@ -269,28 +272,12 @@ public class CameraActivity extends Activity {
     }
 
     /**
-     * Takes pictures at a defined
-     * frame rate.
+     * Always take a picture when
+     * a new coordinate arrives
      */
     public void onTogglePictureTakingLoop() {
-        // 4 images per second
-        final int FRAME_RATE = 4;
-
-        CameraView camera = getCamera();
-
         if (this.isCapturing) {
-            this.pictureTakingLoop.shutdown();
             this.finishWithResult();
-        } else {
-            camera.setMode(Mode.PICTURE);
-            long intervalMs = 1000 / FRAME_RATE;
-            this.pictureTakingLoop = new ScheduledThreadPoolExecutor(1);
-            this.pictureTakingLoop.scheduleAtFixedRate(() -> {
-                Log.d(TAG, "Take picture snapshot");
-                this.updateCurrentPosition();
-                startEventTimestamp = this.getCurrentTimeMs();
-                camera.takePictureSnapshot();
-            }, 0, intervalMs, TimeUnit.MILLISECONDS);
         }
 
         this.isCapturing = !this.isCapturing;
@@ -319,6 +306,18 @@ public class CameraActivity extends Activity {
             case VIDEO:
                 this.onCaptureVideo();
                 break;
+        }
+    }
+
+    @Override
+    public void onData(NMEA.GPSPosition pos) {
+        Log.d(TAG, "DATAAAAA: " + this.mode + "   " + this.isCapturing);
+        if (this.mode == CameraMode.PHOTO_SERIES && this.isCapturing) {
+            Log.d(TAG, "TAKE PHOTO!");
+            this.currentPosition = pos.toJson();
+            CameraView camera = getCamera();
+            startEventTimestamp = this.getCurrentTimeMs();
+            camera.takePictureSnapshot();
         }
     }
 }

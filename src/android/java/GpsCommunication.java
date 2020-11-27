@@ -17,6 +17,7 @@ import com.hoho.android.usbserial.util.SerialInputOutputManager;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -36,7 +37,7 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
     private NMEA nmeaParser = new NMEA();
     private NMEA.GPSPosition currentPosition;
     private int baudRate = 115200;
-    private GpsDataCallback callback;
+    private ArrayList<GpsDataCallback> callbacks = new ArrayList<>();
     private BroadcastReceiver broadcastReceiver;
     private GeoidHeight geoidHeightCorrector;
     /**
@@ -136,8 +137,8 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
             double geoidH = this.geoidHeightCorrector.getInterpolator().interpolateGeoidHeight(this.currentPosition.lat, this.currentPosition.lon);
             this.currentPosition.altitude = this.currentPosition.altitude + this.currentPosition.geoidSeparator - geoidH - altOffsetInMeters;
         }
-        if (this.callback != null) {
-            this.callback.onData(this.currentPosition);
+        for (GpsDataCallback cb : this.callbacks) {
+            cb.onData(this.currentPosition);
         }
     }
 
@@ -160,7 +161,7 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
         return this.currentPosition;
     }
 
-    public void setDataCallback(GpsDataCallback cb) {
-        this.callback = cb;
+    public void addEventListener(GpsDataCallback cb) {
+        this.callbacks.add(cb);
     }
 }
