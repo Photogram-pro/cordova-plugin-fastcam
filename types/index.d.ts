@@ -71,6 +71,10 @@ interface StartCameraParams {
 
 interface InitGpsParams {
   baudRate?: number;
+  /**
+   * Antenna mount altitude in CM
+   */
+  altitudeDifference?: number;
   onData: (position: GpsPosition) => void;
   onError?: (e: any) => void;
 }
