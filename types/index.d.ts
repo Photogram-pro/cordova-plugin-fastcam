@@ -1,4 +1,4 @@
-export enum GpsFixType {
+declare enum GpsFixType {
   INVALID = 0,
   GPS = 1,
   DGPS = 2,
