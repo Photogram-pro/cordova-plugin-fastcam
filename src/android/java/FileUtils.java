@@ -9,13 +9,25 @@ import java.util.ArrayList;
 
 
 public class FileUtils {
-    public static void deleteRecursive(File fileOrDirectory) {
-
-        if (fileOrDirectory.isDirectory())
-            for (File child : fileOrDirectory.listFiles())
-                deleteRecursive(child);
-
-        fileOrDirectory.delete();
+    /**
+     * Recursively deletes
+     * the files in a folder,
+     * if older then olderThen
+     * @param fileOrDirectory
+     * @param olderThen
+     */
+    public static void deleteRecursive(File fileOrDirectory, long olderThen) {
+        if (fileOrDirectory.isDirectory()) {
+            for (File child : fileOrDirectory.listFiles()) {
+                deleteRecursive(child, olderThen);
+            }
+        } else {
+            long lastModified = fileOrDirectory.lastModified();
+            long fileAge = System.currentTimeMillis() - lastModified;
+            if (fileAge >= olderThen) {
+                fileOrDirectory.delete();
+            }
+        }
     }
 
     /**

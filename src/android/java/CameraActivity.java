@@ -21,13 +21,17 @@ import com.otaliastudios.cameraview.controls.Mode;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class CameraActivity extends Activity implements GpsDataCallback {
     private static final String TAG = "CameraActivity";
+    /**
+     * Photos are temporarily saved
+     * on the phone and deleted after
+     * DELETE_PHOTOS_AFTER_DAYS days
+     */
+    private static final long DELETE_PHOTOS_AFTER_DAYS = 10;
     private String dataFolderPath;
     private long startEventTimestamp = 0;
     private boolean isCapturing = false;
@@ -213,7 +217,8 @@ public class CameraActivity extends Activity implements GpsDataCallback {
         File folder = new File(dataFolderPath);
         if (folder.exists()) {
             // Delete folder
-            FileUtils.deleteRecursive(folder);
+            long deleteAfterMs = DELETE_PHOTOS_AFTER_DAYS * 24 * 60 * 60 * 1000;
+            FileUtils.deleteRecursive(folder, deleteAfterMs);
         }
         folder.mkdirs();
     }
