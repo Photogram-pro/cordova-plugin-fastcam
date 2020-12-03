@@ -49,6 +49,7 @@ public class NMEA {
             // Subtract geoid separator from MSL, as it isn't precise
             // enough for our use case. We calculate it ourselves
             position.altitude = Double.parseDouble(tokens[9]);
+            position.origAltitude = Double.parseDouble(tokens[9]);
             position.geoidSeparator = Double.parseDouble(tokens[11]);
             return true;
         }
@@ -98,6 +99,8 @@ public class NMEA {
         public double altitude = 0.0f;
         public float velocity = 0.0f;
         public double geoidSeparator = 0.0d;
+        public double interpolatedGeoid = 0.0d;
+        public double origAltitude = 0.0d;
 
         public void updatefix() {
             fixed = quality > 0;
@@ -111,6 +114,9 @@ public class NMEA {
             JSONObject json = new JSONObject();
             try {
                 json.put("altitude", this.altitude);
+                json.put("origAltitude", this.origAltitude);
+                json.put("interpolatedGeoid", this.origAltitude);
+                json.put("geoidH", this.geoidSeparator);
                 json.put("dir",  this.dir);
                 json.put("fixed", this.fixed);
                 json.put("lat", this.lat);

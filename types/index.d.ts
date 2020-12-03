@@ -11,7 +11,26 @@ declare enum GpsFixType {
 }
 
 interface GpsPosition {
+  /**
+   * Altitude above geoid
+   * with interpolated
+   * geoid height from
+   * custom grid files
+   */
   altitude: number;
+  /**
+   * Interpolated  geoid
+   * height
+   */
+  interpolatedGeoid: number;
+  /**
+   * Original geoid height
+   */
+  geoidH: number;
+  /**
+   * Original altitude
+   */
+  origAltitude: number;
   dir: number;
   fixed: boolean;
   lat: number;

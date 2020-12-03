@@ -136,6 +136,7 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
             double altOffsetInMeters = this.altOffset != 0 ? this.altOffset / 100 : 0;
             double geoidH = this.geoidHeightCorrector.getInterpolator().interpolateGeoidHeight(this.currentPosition.lat, this.currentPosition.lon);
             this.currentPosition.altitude = this.currentPosition.altitude + this.currentPosition.geoidSeparator - geoidH - altOffsetInMeters;
+            this.currentPosition.interpolatedGeoid = geoidH;
         }
         for (GpsDataCallback cb : this.callbacks) {
             cb.onData(this.currentPosition);
