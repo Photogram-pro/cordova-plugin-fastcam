@@ -115,7 +115,7 @@ public class NMEA {
             try {
                 json.put("altitude", this.altitude);
                 json.put("origAltitude", this.origAltitude);
-                json.put("interpolatedGeoid", this.origAltitude);
+                json.put("interpolatedGeoid", this.interpolatedGeoid);
                 json.put("geoidH", this.geoidSeparator);
                 json.put("dir",  this.dir);
                 json.put("fixed", this.fixed);
