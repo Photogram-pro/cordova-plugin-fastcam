@@ -27,6 +27,13 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 public class CameraActivity extends Activity implements GpsDataCallback {
     private static final String TAG = "CameraActivity";
     /**
+     * Will be set to the activity
+     * result as the JSON can be
+     * too large to pass trough
+     * intent data, which is limited
+     */
+    private static String resultJson = "";
+    /**
      * Photos are temporarily saved
      * on the phone and deleted after
      * DELETE_PHOTOS_AFTER_DAYS days
@@ -150,18 +157,19 @@ public class CameraActivity extends Activity implements GpsDataCallback {
         return sb.toString();
     }
 
+    public static String getResultJson() {
+        return resultJson;
+    }
+
     /**
      * Trigger 'onActivityResult'
      * for the calling party
      */
     private void finishWithResult() {
         String resJSON = this.resultingFilesToJSON();
-        Bundle result = new Bundle();
-        result.putString("result", resJSON);
-        Intent intent = new Intent();
-        intent.putExtras(result);
-        setResult(RESULT_OK, intent);
-        finish();
+        resultJson = resJSON;
+        setResult(RESULT_OK);
+        finishAndRemoveTask();
     }
 
     private void setupCamera() {
@@ -175,11 +183,12 @@ public class CameraActivity extends Activity implements GpsDataCallback {
                 Log.d(TAG, "Picture processing duration: " + pictureProcessingDuration);
 
                 String filePath = getLocalFilePath("img_" + getCurrentTimeMs() + ".jpeg");
-                result.toFile(new File(filePath), file -> {});
-                resultingFiles.add(new ResultingFile(filePath, ResultingFile.ResultingFileTypes.IMAGE, startEventTimestamp, currentPosition));
-                if (mode == CameraMode.SINGLE_PHOTO) {
-                    finishWithResult();
-                }
+                result.toFile(new File(filePath), file -> {
+                    resultingFiles.add(new ResultingFile(filePath, ResultingFile.ResultingFileTypes.IMAGE, startEventTimestamp, currentPosition));
+                    if (mode == CameraMode.SINGLE_PHOTO) {
+                        finishWithResult();
+                    }
+                });
             }
 
             @Override
@@ -282,6 +291,7 @@ public class CameraActivity extends Activity implements GpsDataCallback {
      */
     public void onTogglePictureTakingLoop() {
         if (this.isCapturing) {
+            Log.d(TAG, "FINISH WITH RESULT!");
             this.finishWithResult();
         }
 
@@ -316,9 +326,7 @@ public class CameraActivity extends Activity implements GpsDataCallback {
 
     @Override
     public void onData(GPSPosition pos) {
-        Log.d(TAG, "DATAAAAA: " + this.mode + "   " + this.isCapturing);
         if (this.mode == CameraMode.PHOTO_SERIES && this.isCapturing) {
-            Log.d(TAG, "TAKE PHOTO!");
             this.currentPosition = pos.toJson();
             CameraView camera = getCamera();
             startEventTimestamp = this.getCurrentTimeMs();
