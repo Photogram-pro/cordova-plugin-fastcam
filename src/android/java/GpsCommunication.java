@@ -35,7 +35,7 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
     private UsbSerialPort port;
     private SerialInputOutputManager usbIoManager;
     private NMEA nmeaParser = new NMEA();
-    private NMEA.GPSPosition currentPosition;
+    private GPSPosition currentPosition;
     private int baudRate = 115200;
     private ArrayList<GpsDataCallback> callbacks = new ArrayList<>();
     private BroadcastReceiver broadcastReceiver;
@@ -158,7 +158,7 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
         }
     }
 
-    public NMEA.GPSPosition getCurrentPosition() {
+    public GPSPosition getCurrentPosition() {
         return this.currentPosition;
     }
 

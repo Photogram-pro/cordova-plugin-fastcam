@@ -236,7 +236,7 @@ public class CameraActivity extends Activity implements GpsDataCallback {
     private void updateCurrentPosition() {
         GpsCommunication gps = GpsCommunication.getInstance();
         if (gps != null) {
-            NMEA.GPSPosition pos = gps.getCurrentPosition();
+            GPSPosition pos = gps.getCurrentPosition();
             if (pos != null) {
                 this.currentPosition = pos.toJson();
                 Log.d(TAG, "currentPos: " + this.currentPosition.toString());
@@ -315,7 +315,7 @@ public class CameraActivity extends Activity implements GpsDataCallback {
     }
 
     @Override
-    public void onData(NMEA.GPSPosition pos) {
+    public void onData(GPSPosition pos) {
         Log.d(TAG, "DATAAAAA: " + this.mode + "   " + this.isCapturing);
         if (this.mode == CameraMode.PHOTO_SERIES && this.isCapturing) {
             Log.d(TAG, "TAKE PHOTO!");

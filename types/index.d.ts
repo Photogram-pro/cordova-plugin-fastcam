@@ -101,6 +101,7 @@ interface InitGpsParams {
 interface FastCamera {
   startCamera(p: StartCameraParams): Promise<ResultingFile[]>;
   initGps(p: InitGpsParams): void;
+  simulateGps(p: InitGpsParams): void;
 }
 
 interface Navigator {

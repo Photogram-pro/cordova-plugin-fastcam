@@ -34,6 +34,18 @@ class FastCamera {
       [baudRate, altitudeDifference || 0]
     );
   }
+
+  static simulateGps({ onData = () => {}, onError = () => {} } = {}) {
+    exec(
+      (res) => {
+        onData(res);
+      },
+      onError,
+      FastCamera.PLUGIN_NAME,
+      "simulateGps",
+      []
+    );
+  }
 }
 
 navigator.fastCamera = FastCamera;

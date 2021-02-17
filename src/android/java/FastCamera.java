@@ -15,6 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class FastCamera extends CordovaPlugin implements GpsDataCallback {
     private static final String TAG = "CameraTestApp";
     private CallbackContext startCameraCallback = null;
@@ -34,7 +37,31 @@ public class FastCamera extends CordovaPlugin implements GpsDataCallback {
             this.initGps(args);
             return true;
         }
+
+        if (action.equals("simulateGps")) {
+            this.positionDataCallback = callbackContext;
+            this.simulateGps(args);
+            return true;
+        }
+
         return false;
+    }
+
+    private void simulateGps(JSONArray args) {
+        GPSPosition simulatePos = new GPSPosition();
+        simulatePos.fixed = true;
+        simulatePos.quality = 4;
+
+        FastCamera f = this;
+
+        new Timer().scheduleAtFixedRate(new TimerTask(){
+            @Override
+            public void run(){
+                simulatePos.lon = System.currentTimeMillis();
+                simulatePos.lat = System.currentTimeMillis() * 2;
+                f.onData(simulatePos);
+            }
+        }, 0, 1000 / 4);
     }
 
     private void startCamera(JSONArray args) {
@@ -76,7 +103,7 @@ public class FastCamera extends CordovaPlugin implements GpsDataCallback {
     }
 
     @Override
-    public void onData(NMEA.GPSPosition pos) {
+    public void onData(GPSPosition pos) {
         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, pos.toJson());
         pluginResult.setKeepCallback(true); // keep callback
         this.positionDataCallback.sendPluginResult(pluginResult);
