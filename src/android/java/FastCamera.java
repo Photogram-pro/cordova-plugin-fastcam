@@ -100,11 +100,8 @@ public class FastCamera extends CordovaPlugin implements GpsDataCallback {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        Log.d(TAG, "onActivityResult " + requestCode + " " + resultCode);
         if (resultCode == Activity.RESULT_OK && this.startCameraCallback != null) {
-            Bundle result = intent.getExtras();
-            String resultJSON = result.getString("result");
-            Log.d(TAG, "resultJSON: " + resultJSON);
+            String resultJSON = CameraActivity.getResultJson();
             this.startCameraCallback.success(resultJSON);
         }
     }
