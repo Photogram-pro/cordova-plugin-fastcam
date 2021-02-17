@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 
 /**
@@ -92,6 +94,14 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
         this.altOffset = altOffset;
     }
 
+    public void initialize(boolean simulate) {
+        if (simulate) {
+            this.simulateGps();
+        } else {
+            this.initialize();
+        }
+    }
+
     public void initialize() {
         // Find all available drivers from attached devices.
         UsbManager manager = (UsbManager) this.activity.getSystemService(Context.USB_SERVICE);
@@ -138,6 +148,10 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
             this.currentPosition.altitude = this.currentPosition.origAltitude + this.currentPosition.geoidSeparator - geoidH - altOffsetInMeters;
             this.currentPosition.interpolatedGeoid = geoidH;
         }
+        this.triggerCallbacks();
+    }
+
+    private void triggerCallbacks() {
         for (GpsDataCallback cb : this.callbacks) {
             cb.onData(this.currentPosition);
         }
@@ -156,6 +170,24 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void simulateGps() {
+        GPSPosition simulatePos = new GPSPosition();
+        simulatePos.fixed = true;
+        simulatePos.quality = 4;
+
+        GpsCommunication g = this;
+
+        new Timer().scheduleAtFixedRate(new TimerTask(){
+            @Override
+            public void run(){
+                simulatePos.lon = System.currentTimeMillis();
+                simulatePos.lat = System.currentTimeMillis() * 2;
+                g.currentPosition = simulatePos;
+                g.triggerCallbacks();
+            }
+        }, 0, 1000 / 4);
     }
 
     public GPSPosition getCurrentPosition() {
