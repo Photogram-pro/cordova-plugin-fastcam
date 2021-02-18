@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CameraActivity">
+    tools:context=".CameraActivity"
+    android:theme="@style/Theme.AppCompat">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -12,14 +13,6 @@
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="-16dp"
         tools:layout_editor_absoluteY="30dp">
-
-        <Button
-            android:id="@+id/button2"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onRecordButtonClick"
-            android:text="Capture" />
 
         <com.otaliastudios.cameraview.CameraView
             android:id="@+id/camera"
@@ -29,9 +22,28 @@
             app:cameraAudio="off"
             app:cameraEngine="camera2"
             app:cameraMode="video"
-            tools:layout_editor_absoluteY="54dp">
+            tools:layout_editor_absoluteY="54dp" >
 
         </com.otaliastudios.cameraview.CameraView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/recordButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="672dp"
+                android:clickable="true"
+                android:onClick="onRecordButtonClick"
+                android:src="@drawable/ic_baseline_videocam_24"
+                app:backgroundTint="#F44336"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

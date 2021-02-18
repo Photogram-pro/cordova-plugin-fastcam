@@ -6,12 +6,16 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.PictureResult;
@@ -72,6 +76,7 @@ public class CameraActivity extends Activity implements GpsDataCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(this.getViewId("activity_camera", "layout"));
         this.dataFolderPath = this.getApplicationContext().getFilesDir().getAbsolutePath();
 
@@ -311,6 +316,9 @@ public class CameraActivity extends Activity implements GpsDataCallback {
     }
 
     public void onRecordButtonClick(View view) {
+        FloatingActionButton fab = findViewById(this.getViewId("recordButton", "id"));
+        fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
+
         switch (this.mode) {
             case PHOTO_SERIES:
                 this.onTogglePictureTakingLoop();
