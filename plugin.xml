@@ -72,7 +72,7 @@
       <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     </config-file>
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
-      <activity android:label="Camera Activity" android:name="com.cordovapluginfastcam.CameraActivity"></activity>
+      <activity android:label="Camera Activity" android:name="com.cordovapluginfastcam.CameraActivity" android:screenOrientation="portrait"></activity>
     </config-file>
   </platform>
 
