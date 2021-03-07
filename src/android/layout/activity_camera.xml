@@ -34,7 +34,7 @@
                 android:id="@+id/recordButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="672dp"
+                android:layout_marginTop="600dp"
                 android:clickable="true"
                 android:onClick="onRecordButtonClick"
                 android:src="@drawable/ic_baseline_videocam_24"
