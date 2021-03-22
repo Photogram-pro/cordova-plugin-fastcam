@@ -2,8 +2,6 @@ package com.cordovapluginfastcam;
 
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,6 +87,7 @@ public class NMEA {
         }
     }
 
+
     GPSPosition position = new GPSPosition();
 
     private static final Map<String, SentenceParser> sentenceParsers = new HashMap<String, SentenceParser>();
@@ -102,7 +101,7 @@ public class NMEA {
         sentenceParsers.put("VTG", new GPVTG());
     }
 
-    public GPSPosition parse(String lines, String typeFilter) {
+    public GPSPosition parse(String lines, String typeFilter) throws NullPointerException {
         String[] splitted = lines.split("\n");
         for (int i = 0; i < splitted.length; i++) {
             String line = splitted[i];
@@ -117,14 +116,10 @@ public class NMEA {
                 if (!type.equals(typeFilter)) {
                     continue;
                 }
-                try {
-                    if(sentenceParsers.containsKey(type)) {
-                        sentenceParsers.get(type).parse(tokens, position);
-                    }
-                    position.updatefix();
-                } catch (Exception e) {
-                    Log.d("NMEA", "Nmea parse error. Continue...");
+                if(sentenceParsers.containsKey(type)) {
+                    sentenceParsers.get(type).parse(tokens, position);
                 }
+                position.updatefix();
             }
         }
 

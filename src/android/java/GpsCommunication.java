@@ -1,5 +1,6 @@
 package com.cordovapluginfastcam;
 
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -139,16 +141,21 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
 
     @Override
     public void onNewData(byte[] bytes) {
-        String strData = new String(bytes, StandardCharsets.UTF_8);
-        this.currentPosition = nmeaParser.parse(strData, "GGA");
-        // Interpolate geoid height and add it
-        if (this.currentPosition.altitude > 0) {
-            double altOffsetInMeters = this.altOffset != 0 ? this.altOffset / 100 : 0;
-            double geoidH = this.geoidHeightCorrector.getInterpolator().interpolateGeoidHeight(this.currentPosition.lat, this.currentPosition.lon);
-            this.currentPosition.altitude = this.currentPosition.origAltitude + this.currentPosition.geoidSeparator - geoidH - altOffsetInMeters;
-            this.currentPosition.interpolatedGeoid = geoidH;
+        try {
+            String strData = new String(bytes, StandardCharsets.UTF_8);
+            this.currentPosition = nmeaParser.parse(strData, "GGA");
+            // Interpolate geoid height and add it
+            if (this.currentPosition.altitude > 0) {
+                double altOffsetInMeters = this.altOffset != 0 ? this.altOffset / 100 : 0;
+                
+                double geoidH = this.geoidHeightCorrector.getInterpolator().interpolateGeoidHeight(this.currentPosition.lat, this.currentPosition.lon);
+                this.currentPosition.altitude = this.currentPosition.origAltitude + this.currentPosition.geoidSeparator - geoidH - altOffsetInMeters;
+                this.currentPosition.interpolatedGeoid = geoidH;
+            }
+            this.triggerCallbacks();
+        } catch (NullPointerException e) {
+            Log.d(TAG, "NMEA parse error, continue...");
         }
-        this.triggerCallbacks();
     }
 
     private void triggerCallbacks() {
@@ -176,18 +183,23 @@ public class GpsCommunication implements SerialInputOutputManager.Listener {
         GPSPosition simulatePos = new GPSPosition();
         simulatePos.fixed = true;
         simulatePos.quality = 4;
+        simulatePos.altitude = this.altOffset;
 
         GpsCommunication g = this;
+
+        Random rand = new Random();
 
         new Timer().scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run(){
-                simulatePos.lon = System.currentTimeMillis();
-                simulatePos.lat = System.currentTimeMillis() * 2;
+                float addToLonRandom = rand.nextFloat() / 10;
+                float addToLatRandom = rand.nextFloat() / 10;
+                simulatePos.lon = 11.657244 + addToLonRandom;
+                simulatePos.lat = 46.717705 + addToLatRandom;
                 g.currentPosition = simulatePos;
                 g.triggerCallbacks();
             }
-        }, 0, 1000 / 4);
+        }, 0, 1000 / 12);
     }
 
     public GPSPosition getCurrentPosition() {

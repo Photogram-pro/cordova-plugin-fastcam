@@ -35,7 +35,11 @@ class FastCamera {
     );
   }
 
-  static simulateGps({ onData = () => {}, onError = () => {} } = {}) {
+  static simulateGps({
+    altitudeDifference = 0,
+    onData = () => {},
+    onError = () => {},
+  } = {}) {
     exec(
       (res) => {
         onData(res);
@@ -43,7 +47,7 @@ class FastCamera {
       onError,
       FastCamera.PLUGIN_NAME,
       "simulateGps",
-      []
+      [altitudeDifference]
     );
   }
 }

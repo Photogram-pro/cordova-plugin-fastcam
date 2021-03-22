@@ -48,7 +48,15 @@ public class FastCamera extends CordovaPlugin implements GpsDataCallback {
     }
 
     private void simulateGps(JSONArray args) {
+        Double altOffset = 0d;
+        try {
+            altOffset = args.getDouble(0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         GpsCommunication gps = GpsCommunication.getInstance(this.cordova.getActivity());
+        gps.configure(0, altOffset);
         // true = simulate gps position
         gps.initialize(true);
     }
