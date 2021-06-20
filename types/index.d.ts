@@ -88,7 +88,7 @@ interface StartCameraParams {
   clockSyncTimestamp?: number;
 }
 
-declare enum GeoidModel {
+const enum GeoidModel {
   alto_adige = 0,
   italgeo90 = 1,
 }
