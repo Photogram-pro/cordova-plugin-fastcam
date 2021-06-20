@@ -56,7 +56,7 @@ public class FastCamera extends CordovaPlugin implements GpsDataCallback {
         }
 
         GpsCommunication gps = GpsCommunication.getInstance(this.cordova.getActivity());
-        gps.configure(0, altOffset);
+        gps.configure(0, altOffset, GpsCommunication.GeoidModel.alto_adige);
         // true = simulate gps position
         gps.initialize(true);
     }
@@ -83,6 +83,7 @@ public class FastCamera extends CordovaPlugin implements GpsDataCallback {
     private void initGps(JSONArray args) {
         int baudRate = 0;
         Double altOffset = 0d;
+        GpsCommunication.GeoidModel geoidModel = GpsCommunication.GeoidModel.alto_adige;
         try {
             baudRate = args.getInt(0);
         } catch (JSONException e) {
@@ -93,8 +94,15 @@ public class FastCamera extends CordovaPlugin implements GpsDataCallback {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        try {
+            geoidModel = GpsCommunication.GeoidModel.values()[args.getInt(2)];
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         GpsCommunication gps = GpsCommunication.getInstance(this.cordova.getActivity());
-        gps.configure(baudRate, altOffset);
+        gps.configure(baudRate, altOffset, geoidModel);
         gps.addEventListener(this);
         gps.initialize();
     }

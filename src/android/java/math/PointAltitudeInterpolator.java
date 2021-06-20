@@ -45,8 +45,64 @@ public class PointAltitudeInterpolator {
 
         public GridCell(GridPoint[] points) {
             this.points = points;
+            this.sortPoints();
             this.calculateCentroid();
         }
+
+
+        private void sortPoints() {
+            double minX = Integer.MAX_VALUE;
+            double minY = Integer.MAX_VALUE;
+            double maxX = 0;
+            double maxY = 0;
+
+            for (GridPoint point : this.points) {
+                if (point.getX() < minX) {
+                    minX = point.getX();
+                }
+                if (point.getX() > maxX) {
+                    maxX = point.getX();
+                }
+                if (point.getY() < minY) {
+                    minY = point.getY();
+                }
+                if (point.getY() > maxY) {
+                    maxY = point.getY();
+                }
+            }
+
+            GridPoint pointOne = null;
+            GridPoint pointTwo = null;
+            GridPoint pointThree = null;
+            GridPoint pointFour = null;
+
+            for (int pointIdx = 0; pointIdx < this.points.length; pointIdx += 1) {
+                GridPoint currPoint = this.points[pointIdx];
+                if (currPoint.getX() == minX && currPoint.getY() == maxY) {
+                    pointOne = currPoint;
+                }
+                if (currPoint.getX() == maxX && currPoint.getY() == maxY) {
+                    pointTwo = currPoint;
+                }
+                if (currPoint.getX() == minX && currPoint.getY() == minY) {
+                    pointThree = currPoint;
+                }
+                if (currPoint.getX() == maxX && currPoint.getY() == minY) {
+                    pointFour = currPoint;
+                }
+            }
+
+            if (pointOne == null || pointTwo == null || pointThree == null || pointFour == null) {
+                Log.d(TAG, "Error while sorting points, as one or more points did not match the maxima/minima");
+                return;
+            }
+
+            this.points[0] = pointOne;
+            this.points[1] = pointTwo;
+            this.points[2] = pointThree;
+            this.points[3] = pointFour;
+        }
+
 
         private void calculateCentroid() {
             double x = 0;
@@ -86,7 +142,7 @@ public class PointAltitudeInterpolator {
         }
 
         public String toUtmString() {
-            String str = "";
+            String str = "\n";
             str += this.centroidX + "," + this.centroidY + "," + "0" + "\n";
             for (GridPoint point : points) {
                 str += point.getX() + "," + point.getY() + "," + point.getH() + "\n";
@@ -106,8 +162,15 @@ public class PointAltitudeInterpolator {
     private static final String TAG = "GpsPointAltitudeInterpolator";
     private KDTree<GridCell> tree;
 
+    public static enum GridCoordinatesType  {UTM, WGS84}
+    private GridCoordinatesType coordinatesType = GridCoordinatesType.UTM;
 
     public PointAltitudeInterpolator(double[][] gridX, double[][] gridY, double[][] gridH) throws DataNotInGridFormException {
+        this.createKDTree(gridX, gridY, gridH);
+    }
+
+    public PointAltitudeInterpolator(double[][] gridX, double[][] gridY, double[][] gridH, GridCoordinatesType coordinatesType) throws DataNotInGridFormException {
+        this.coordinatesType = coordinatesType;
         this.createKDTree(gridX, gridY, gridH);
     }
 
@@ -115,9 +178,7 @@ public class PointAltitudeInterpolator {
         if (gridX.length != gridY.length ||
                 gridH.length != gridX.length ||
                 gridX[0].length != gridY[0].length ||
-                gridX[0].length != gridH[0].length ||
-                gridX.length % 2 != 0 ||
-                gridX[0].length % 2 != 0) {
+                gridX[0].length != gridH[0].length) {
             throw new DataNotInGridFormException();
         }
 
@@ -144,20 +205,25 @@ public class PointAltitudeInterpolator {
             }
         }
 
+
         this.tree = new KDTree<>(keys, values);
     }
 
     public double interpolateGeoidHeight(double lat, double lon) {
-        // Convert lat, lon to UTM
-        UTM utm = new UTM(new WGS84(lat, lon));
-        double easting = utm.getEasting();
-        double northing = utm.getNorthing();
+        double pointX = lon;
+        double pointY = lat;
 
-        double[] point = {easting, northing};
+        if (this.coordinatesType == GridCoordinatesType.UTM) {
+            // Convert lat, lon to UTM
+            UTM utm = new UTM(new WGS84(lat, lon));
+            pointX = utm.getEasting();
+            pointY = utm.getNorthing();
+        }
+
+        double[] point = {pointX, pointY};
         Neighbor<double[], GridCell>[] nearestPoints = this.tree.knn(point, 1);
         GridCell nearestCell = nearestPoints[0].value;
         GridPoint[] points = nearestCell.getPoints();
-
 
         // Apply bilinear interpolation using 4 points
         double x1 = points[0].getX();
@@ -171,8 +237,8 @@ public class PointAltitudeInterpolator {
         double fQ21 = points[2].getH();
         double fQ22 = points[3].getH();
 
-        double x = easting;
-        double y = northing;
+        double x = pointX;
+        double y = pointY;
 
         double resultingGeoidHeight = ((y2 - y) / (y2 - y1)) * (((x2 - x) / (x2 - x1)) * fQ11 + ((x - x1) / (x2 - x1)) * fQ21)
                 + ((y - y1) / (y2 - y1)) * (((x2 - x) / (x2 - x1)) * fQ12 + ((x - x1) / (x2 - x1)) * fQ22);

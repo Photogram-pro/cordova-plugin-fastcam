@@ -88,12 +88,18 @@ interface StartCameraParams {
   clockSyncTimestamp?: number;
 }
 
+declare enum GeoidModel {
+  alto_adige = 0,
+  italgeo90 = 1,
+}
+
 interface InitGpsParams {
   baudRate?: number;
   /**
    * Antenna mount altitude in CM
    */
   altitudeDifference?: number;
+  geoidModel: GeoidModel;
   onData: (position: GpsPosition) => void;
   onError?: (e: any) => void;
 }

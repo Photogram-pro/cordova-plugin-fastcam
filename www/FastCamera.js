@@ -23,6 +23,7 @@ class FastCamera {
     altitudeDifference = 0,
     onData = () => {},
     onError = () => {},
+    geoidModel = 0,
   } = {}) {
     exec(
       (res) => {
@@ -31,7 +32,7 @@ class FastCamera {
       onError,
       FastCamera.PLUGIN_NAME,
       "initGps",
-      [baudRate, altitudeDifference || 0]
+      [baudRate, altitudeDifference || 0, geoidModel]
     );
   }
 

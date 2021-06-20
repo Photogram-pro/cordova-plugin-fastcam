@@ -78,7 +78,8 @@ public class CameraActivity extends Activity implements GpsDataCallback {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(this.getViewId("activity_camera", "layout"));
-        this.dataFolderPath = this.getApplicationContext().getFilesDir().getAbsolutePath();
+        // this.dataFolderPath = this.getApplicationContext().getFilesDir().getAbsolutePath();
+        this.dataFolderPath = new File(this.getApplicationContext().getExternalFilesDir(null).getAbsolutePath(), ".PHOTOGRAM_TEMP").toString();
 
         Log.d(TAG, "Files dir: " + this.dataFolderPath);
 
